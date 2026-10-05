@@ -1,32 +1,19 @@
-# Python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-
-# Virtual environments
 .venv/
 venv/
 env/
-
-# PyInstaller
 build/
 dist/
-
-# Local application data
 data/
 *.db
 *.sqlite
 *.sqlite3
-
-# IDE / editor
 .vscode/
 .idea/
-
-# OS files
 .DS_Store
 Thumbs.db
-
-# Temporary files
 *.tmp
 *.log
