@@ -1,57 +1,36 @@
-# نور الحفظ — Noor-ul-Hifz V3
+# نور الحفظ — Noor-ul-Hifz V4
 
 Qur'an Memorization Student Monitoring & Daily Reporting System.
 
-## V3 fixes
+## V4 Major Update
 
-### 1. Persistent database — critical fix
-The previous one-file Windows EXE stored SQLite beside `__file__`. With PyInstaller `--onefile`, that location is the temporary extraction directory, which is removed when the application closes. That made imported data appear to save, then disappear after reopening.
+### 1. Multi-Dimensional Record Filtering (Collect Student Report)
+When reviewing any student's record history, staff can now instantly filter records by:
+- **Specific Date**: Inspect a single day (`YYYY-MM-DD`) with one-click "Today" shortcut.
+- **Day of Week**: Look up records for specific days across the entire term (e.g. Every Friday / پیر، منگل، بدھ، جمعرات، جمعہ، ہفتہ، اتوار).
+- **Week Number**: Filter by week of the year (Week 1–53 + Year).
+- **Month**: Review any calendar month (e.g. October 2026).
+- **Year**: View complete annual logs.
+- **Dynamic Summaries & Filtered Totals**: Shows both filtered totals and lifetime totals side-by-side.
+- **Filtered Excel Export**: Exports styled, filtered spreadsheets with filter parameters preserved in the report header.
 
-V3 stores the database in a persistent Windows user-data directory when packaged:
+### 2. Appearance & Customisation (App Settings)
+- **Theme Selection**: Toggle between crisp Light Mode and immersive Dark Mode with instant live application.
+- **Accent Color Palettes**: Choose from 8 curated presets (*Classic Blue, Ocean Teal, Emerald Green, Royal Violet, Crimson Rose, Warm Amber, Slate Indigo, Obsidian*) or enter any custom Hex color.
+- **Font Scaling**: Adjust interface font sizes across Small, Normal, and Large.
+- Settings are saved automatically and restored on subsequent launches.
 
-```text
-%LOCALAPPDATA%\Noor-ul-Hifz\student_logs.db
-```
+### 3. V4 Performance & Concurrency Engine
+- Enabled SQLite **WAL (Write-Ahead Logging)** mode for lightning-fast reads and writes.
+- Multi-column index caching on `(student_id, log_date)` and `log_date`.
+- Zebra-striped treeviews and active navigation pill indicators for a polished, modern feel.
 
-The database is created automatically and survives application restarts and EXE replacement.
+### 4. Excel Import & Manual Entry
+- Full support for institute Excel daily report workbooks (`یومیہ رپورٹ` sheet).
+- Flexible manual student entry with real-time condition checkboxes.
+- Overwrite protection, future date prevention, and automated safety backups.
 
-When running from Python source, the database remains in the project's `data/` folder.
-
-### 2. Manual entry
-A new **Manual Entry** section allows staff to record a student without Excel:
-
-- Date
-- Student ID
-- Student name
-- غیر حاضری
-- تاخیر
-- سبق کا ناغہ
-- سبقی کا ناغہ
-- منزل کا ناغہ
-
-Existing students can be loaded by ID.
-
-### 3. Corrected same-day updates
-Same student + same date is an upsert. A corrected import/manual entry now **replaces** the five daily flags instead of using `MAX()` and accidentally preserving old flags.
-
-### 4. Website-aligned visual direction
-The desktop UI now follows the Noor-ul-Hifz website's calmer visual language: warm/off-white surfaces, dark ink typography, restrained blue accent, thin borders, generous spacing, and simple data-focused cards.
-
-Website: https://noorulhifz.netlify.app/
-
-## Excel import
-
-The importer still uses the fixed ranges from the institute's daily workbook:
-
-| Category | ID ranges | Name ranges |
-|---|---|---|
-| غیر حاضری | B4:B7, F4:F7 | C4:C7, G4:G7 |
-| تاخیر | B11:B22, F11:F22 | C11:C22, G11:G22 |
-| سبق کا ناغہ | B26:B39, F26:F39 | C26:C39, G26:G39 |
-| سبقی کا ناغہ | B43:B54, F43:F54 | C43:C54, G43:G54 |
-| منزل کا ناغہ | B58:B69, F58:F69 | C58:C69, G58:G69 |
-
-Only the `یومیہ رپورٹ` sheet is read.
+---
 
 ## Run from source
 
@@ -63,43 +42,38 @@ python main.py
 ## Build the Windows EXE
 
 ```bat
+BUILD_WINDOWS.bat
+```
+
+or manually:
+
+```bat
 pyinstaller --noconfirm --clean --windowed --onefile --name "Noor-ul-Hifz" --icon "icon.ico" main.py
 ```
 
-The EXE will be in:
-
+The compiled standalone executable will be generated at:
 ```text
 dist\Noor-ul-Hifz.exe
 ```
 
-## Important test before deployment
+## Inno Setup Windows Installer
+To build the setup installer, compile `installer.iss` using Inno Setup Compiler. The setup wizard executable is saved to:
+```text
+release\Noor-ul-Hifz-Setup-4.0.exe
+```
 
-1. Build the EXE.
-2. Open it.
-3. Add one record using Manual Entry.
-4. Close the EXE completely.
-5. Open it again.
-6. Open **All Students** and **Collect Report**.
-7. Confirm the record is still present.
-8. Import an Excel report.
-9. Close and reopen again.
-10. Confirm the imported records remain.
-
-Do not test persistence by looking only at the success message. The real test is closing the application and opening it again.
-
-## Data backup
-
-Back up this file on the Windows machine:
-
+## Data Location & Backup
+When packaged as an EXE, persistent data is stored in the local Windows user profile:
 ```text
 %LOCALAPPDATA%\Noor-ul-Hifz\student_logs.db
 ```
 
-Do not publish a real institute database in GitHub releases.
+Use the built-in "💾 Backup database" button in the sidebar or copy the database file directly for offline backups.
+
+---
 
 ## Author
-
-**ALI QURESHI**
-
+**ALI QURESHI**  
 Phone: `0300-2917500`  
-Email: `aliaqureshi75@gmail.com`
+Email: `aliaqureshi75@gmail.com`  
+Website: https://noorulhifz.netlify.app/
